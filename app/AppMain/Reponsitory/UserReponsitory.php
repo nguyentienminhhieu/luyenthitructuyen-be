@@ -3,12 +3,12 @@
 namespace App\AppMain\Reponsitory;
 use App\Models\User;
 
-class UserReponsitory {
+class UserReponsitory extends  BaseRepository{
     
-    // public function __construct()
-    // {
-    //     $this->getQueryBuilder();
-    // }
+    public function getModel()
+    {
+        return User::class;
+    }
 
     public function getQueryBuilder()
     {

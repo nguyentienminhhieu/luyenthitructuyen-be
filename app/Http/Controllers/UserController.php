@@ -21,6 +21,10 @@ class UserController extends Controller
         if (Auth::guard('web')->attempt($credentials)) {
             // Đăng nhập thành công
             $admin = Auth::guard('web')->user();
+            if($admin->active == 0) {
+                Auth::guard('web')->logout();
+                return response()->json(['error' => 'Tài khoản chưa được kích hoạt hoặc đã bị vô hiệu hóa'], 401);
+            }
             $token = $admin->createToken('access-token')->plainTextToken;
 
             return response()->json(['data'=> $admin,'token' => $token]);
@@ -37,6 +41,7 @@ class UserController extends Controller
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6',
+                'role' => 'required',
             ]);
                
             $data = $request->all();

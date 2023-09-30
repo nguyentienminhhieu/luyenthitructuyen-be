@@ -3,12 +3,12 @@
 namespace App\AppMain\Reponsitory;
 use App\Models\Admin;
 
-class AdminReponsitory {
+class AdminReponsitory extends  BaseRepository  {
     
-    // public function __construct()
-    // {
-    //     $this->getQueryBuilder();
-    // }
+    public function getModel()
+    {
+        return Admin::class;
+    }
 
     public function getQueryBuilder()
     {

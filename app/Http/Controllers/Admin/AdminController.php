@@ -7,13 +7,19 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\AppMain\Services\AdminService;
+use App\AppMain\Services\UserService;
 
 class AdminController extends Controller
 {
     protected $adminService;
+    protected $userService;
 
-    public function __construct(AdminService $adminService) {
+    public function __construct(
+        AdminService $adminService,
+        UserService $userService
+    ) {
         $this->adminService = $adminService;
+        $this->userService = $userService;
     }
 
     public function login(Request $request)
@@ -50,6 +56,19 @@ class AdminController extends Controller
             $input = $request->all();
             $admin = $this->adminService->createAccount($input);
             return response()->json(['data' => $admin], 200);
+        } 
+        catch (Exception $e) 
+        {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function activeUser(Request $request)
+    {
+        try {
+            $input = $request->all();
+            $user = $this->userService->activeUser($input['user_id']);
+            return response()->json(['data' => $user], 200);
         } 
         catch (Exception $e) 
         {
