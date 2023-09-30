@@ -16,4 +16,12 @@ class UserService {
         $input['password'] = Hash::make($input['password']);
         return $this->userReponsitory->create($input);
     }
+    public function activeUser($user_id)
+    {
+        $user = $this->userReponsitory->find($user_id);
+        $input = [
+            'active' => $user->active==0?1:0
+        ];
+        return $this->userReponsitory->update('id', $user_id, $input);
+    }
 }
