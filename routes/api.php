@@ -35,4 +35,7 @@ Route::prefix('admin') ->group(function() {
     Route::resource('subject', SubjectController::class)->middleware('auth:sanctum', 'abilities:admin');
     Route::resource('grade', GradeController::class)->middleware('auth:sanctum', 'abilities:admin');
     Route::post('active-user', [AdminController::class, 'activeUser'])->middleware('auth:sanctum', 'abilities:admin');
+    Route::post('active-admin', [AdminController::class, 'activeAdmin'])->middleware('auth:sanctum', 'abilities:admin');
+    Route::get('list-admin', [AdminController::class, 'listAccount'])->middleware('auth:sanctum', 'abilities:admin');
+    Route::delete('delete-admin/{id}', [AdminController::class, 'deleteAccount'])->middleware('auth:sanctum', 'abilities:admin');
 });
