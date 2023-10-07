@@ -55,7 +55,7 @@ class AdminController extends Controller
         try {
             $input = $request->all();
             $admin = $this->adminService->createAccount($input);
-            return response()->json(['data' => $admin], 200);
+            return response()->json(['data' => 'success'], 200);
         } 
         catch (Exception $e) 
         {
@@ -69,6 +69,43 @@ class AdminController extends Controller
             $input = $request->all();
             $user = $this->userService->activeUser($input['user_id']);
             return response()->json(['data' => $user], 200);
+        } 
+        catch (Exception $e) 
+        {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function activeAdmin(Request $request)
+    {
+        try {
+            $input = $request->all();
+            $admin = $this->adminService->activeAdmin($input['id']);
+            return response()->json(['data' => $admin], 200);
+        } 
+        catch (Exception $e) 
+        {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function listAccount(Request $request) 
+    {
+        try {
+            $input = $request->all();
+            $admin = $this->adminService->listAdmin($input);
+            return response()->json(['data' => $admin], 200);
+        } 
+        catch (Exception $e) 
+        {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+    public function deleteAccount($id) 
+    {
+        try {
+            $admin = $this->adminService->deleteAdmin($id);
+            return response()->json(['data' => $admin], 200);
         } 
         catch (Exception $e) 
         {
