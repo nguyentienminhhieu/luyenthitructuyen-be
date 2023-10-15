@@ -33,4 +33,10 @@ class GradeReponsitory extends  BaseRepository  {
         $query = $this->getQueryBuilder();
         return $query->with('subjects')->get();
     }
+
+    public function getDetail($id)
+    {
+        $query = $this->getQueryBuilder();
+        return $query->with(['gradeSubjectIds'])->where('id', $id)->first();
+    }
 }

@@ -59,7 +59,13 @@ class SubjectController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $subject = $this->subjectService->show($id);
+
+            return response()->json(['data'=> $subject], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 
     /**

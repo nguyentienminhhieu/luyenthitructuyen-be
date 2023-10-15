@@ -39,7 +39,7 @@ class AdminService {
     {
         $admin = $this->adminReponsitory->find($id);
         if(Auth::user()->role == Admin::ADMIN && Auth::user()->id != $id) {
-            return $this->adminReponsitory->delete($id);
+            return $this->adminReponsitory->destroy($id);
         } else {
             return response()->json(['errors' => "Bạn không có quyền thực hiện điều này"]);
         }
