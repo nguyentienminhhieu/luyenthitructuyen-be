@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradeController;
-
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ExamController;
+use App\Models\Exam;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,12 +32,24 @@ Route::post('/register', [UserController::class, 'register']);
 Route::prefix('admin') ->group(function() {
     Route::post('/login', [AdminController::class, 'login']);
     Route::post('/logout', [AdminController::class, 'logout']);
-    Route::get('/detail', [AdminController::class, 'detail'])->middleware('auth:sanctum', 'abilities:admin');
-    Route::post('/create-account-admin', [AdminController::class, 'createAccount'])->middleware('auth:sanctum', 'abilities:admin');
-    Route::resource('subject', SubjectController::class)->middleware('auth:sanctum', 'abilities:admin');
-    Route::resource('grade', GradeController::class)->middleware('auth:sanctum', 'abilities:admin');
-    Route::post('active-user', [AdminController::class, 'activeUser'])->middleware('auth:sanctum', 'abilities:admin');
-    Route::post('active-admin', [AdminController::class, 'activeAdmin'])->middleware('auth:sanctum', 'abilities:admin');
-    Route::get('list-admin', [AdminController::class, 'listAccount'])->middleware('auth:sanctum', 'abilities:admin');
-    Route::delete('delete-admin/{id}', [AdminController::class, 'deleteAccount'])->middleware('auth:sanctum', 'abilities:admin');
+    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+        Route::get('/detail', [AdminController::class, 'detail']);
+        Route::post('/create-account-admin', [AdminController::class, 'createAccount']);
+        Route::resource('subject', SubjectController::class);
+        Route::resource('grade', GradeController::class);
+        Route::post('active-user', [AdminController::class, 'activeUser']);
+        Route::post('active-admin', [AdminController::class, 'activeAdmin']);
+        Route::get('list-admin', [AdminController::class, 'listAccount']);
+        Route::delete('delete-admin/{id}', [AdminController::class, 'deleteAccount']);
+
+        //category
+        Route::get('/list-category', [CategoryController::class, 'index']);
+        Route::get('/detail-category/{id}', [CategoryController::class, 'show']);
+        Route::post('/create-category', [CategoryController::class, 'create']);
+        Route::put('/update-category/{id}', [CategoryController::class, 'update']);
+        Route::delete('/delete-category/{id}', [CategoryController::class, 'delete']);
+
+        //exam
+        Route::post('/create-exam', [ExamController::class, 'createExam']);
+    });
 });

@@ -14,6 +14,10 @@ class SubjectService {
     {
         return  $this->subjectReponsitory->all();
     }
+    public function show($id)
+    {
+        return  $this->subjectReponsitory->find($id);
+    }
     public function store($input)
     {
         $check_slug = $this->subjectReponsitory->checkSlug(['slug' => $input['slug']]);

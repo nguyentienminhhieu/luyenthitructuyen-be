@@ -20,4 +20,10 @@ class AdminReponsitory extends  BaseRepository  {
         $query = $this->getQueryBuilder();
         return $query->create($input);
     }
+
+    public function destroy($id)
+    {
+        $query = $this->getQueryBuilder();
+        return $query->where('id', $id)->forceDelete();
+    }
 }

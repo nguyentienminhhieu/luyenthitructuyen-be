@@ -59,7 +59,13 @@ class GradeController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $grade = $this->gradeService->show($id);
+
+            return response()->json(['data'=> $grade], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 
     /**

@@ -14,6 +14,15 @@ class GradeService {
     {
         return  $this->gradeReponsitory->getList();
     }
+    public function show($id)
+    {
+       $grade = $this->gradeReponsitory->getDetail($id);
+       $grade->subject_ids =  $grade->gradeSubjectIds->map(function($item){
+        return $item->subject_id;
+       });
+       unset($grade->gradeSubjectIds);
+       return $grade;
+    }
     public function store($input)
     {
         $check_slug = $this->gradeReponsitory->checkSlug(['slug' => $input['slug']]);
