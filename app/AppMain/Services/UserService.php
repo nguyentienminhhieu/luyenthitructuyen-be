@@ -24,4 +24,10 @@ class UserService {
         ];
         return $this->userReponsitory->update('id', $user_id, $input);
     }
+    public function listUsers()
+    {
+        $user = $this->userReponsitory->all();
+        
+        return $user;
+    }
 }

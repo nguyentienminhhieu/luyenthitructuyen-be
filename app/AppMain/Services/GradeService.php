@@ -35,7 +35,7 @@ class GradeService {
     }
     public function update($input, $id)
     {
-        $this->gradeReponsitory->update('id',$id,['name'=>$input['name']]);
+        $this->gradeReponsitory->update('id',$id,['name'=>$input['name'],'slug'=>isset($input['slug'])?$input['slug']:'']);
         $grade = $this->gradeReponsitory->find($id);
         $grade->subjects()->sync($input['subjectIds']);
         return  $grade;
