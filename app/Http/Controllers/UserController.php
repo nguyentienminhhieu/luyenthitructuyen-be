@@ -52,4 +52,26 @@ class UserController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function listUsers()
+    {
+        try {  
+            $user = $this->userService->listUsers();
+
+            return response()->json(['data'=> $user], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function infoUser()
+    {
+        try {  
+            $user = Auth::user();
+
+            return response()->json(['data'=> $user], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }

@@ -21,4 +21,14 @@ class Question extends Model
         "file",
         "type",
     ];
+
+    public function questionsExtends()
+    {
+        return $this->hasMany(Question::class,'parent_id' ,'id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class,'question_id' ,'id');
+    }
 }

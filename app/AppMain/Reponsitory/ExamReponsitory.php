@@ -15,9 +15,14 @@ class ExamReponsitory extends  BaseRepository  {
         return Exam::query();
     }
 
-    // public function create($input) 
-    // {
-    //     $query = $this->getQueryBuilder();
-    //     return $query->create($input);
-    // }
+    public function getExam($id) 
+    {
+        $query = $this->getQueryBuilder();
+        return $query->with(['questions'=> function ($query2) {
+            $query2->with('answers');
+            $query2->with('questionsExtends.answers');
+            $query2->whereNull('parent_id');
+
+        }])->with('questionIds')->where('id', $id)->first();
+    }
 }

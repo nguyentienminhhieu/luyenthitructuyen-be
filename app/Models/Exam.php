@@ -22,4 +22,14 @@ class Exam extends Model
         "is_active",
         "category_id",
     ];
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class,'reference_id' ,'id');
+    }
+
+    public function questionIds()
+    {
+        return $this->hasMany(Question::class,'reference_id' ,'id');
+    }
 }

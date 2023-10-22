@@ -24,8 +24,19 @@ use App\Models\Exam;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/register', [UserController::class, 'register']);
+
+
+//web
+Route::prefix('web') ->group(function() {
+    Route::post('/login', [UserController::class, 'login']);
+    Route::post('/register', [UserController::class, 'register']);
+
+    //user
+    Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+        Route::get('/info-user', [UserController::class, 'infoUser']);
+    });
+    
+});
 
 
 //admin
@@ -41,6 +52,8 @@ Route::prefix('admin') ->group(function() {
         Route::post('active-admin', [AdminController::class, 'activeAdmin']);
         Route::get('list-admin', [AdminController::class, 'listAccount']);
         Route::delete('delete-admin/{id}', [AdminController::class, 'deleteAccount']);
+        //user
+        Route::get('list-user', [UserController::class, 'listUsers']);
 
         //category
         Route::get('/list-category', [CategoryController::class, 'index']);
@@ -51,5 +64,8 @@ Route::prefix('admin') ->group(function() {
 
         //exam
         Route::post('/create-exam', [ExamController::class, 'createExam']);
+        Route::get('/exam/{id}', [ExamController::class, 'show']);
+        Route::put('/update-exam/{id}', [ExamController::class, 'update']);
+        Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
     });
 });
