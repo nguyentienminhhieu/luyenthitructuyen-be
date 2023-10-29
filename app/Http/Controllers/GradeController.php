@@ -107,4 +107,18 @@ class GradeController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+
+    //web
+    public function listGrade(Request $request)
+    {
+        try {
+            $inputs = $request->all();
+            $user = $this->gradeService->getListGrade($inputs);
+
+            return response()->json(['data'=> $user], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }

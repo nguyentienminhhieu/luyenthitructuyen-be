@@ -4,6 +4,9 @@ namespace App\AppMain\Services;
 use App\AppMain\Reponsitory\ExamReponsitory;
 use App\AppMain\Reponsitory\QuestionReponsitory;
 use App\AppMain\Reponsitory\AnswerReponsitory;
+use App\AppMain\Reponsitory\CategoryReponsitory;
+use App\Models\Exam;
+use App\AppMain\DTO\ExamDTO;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,14 +18,22 @@ class ExamService {
     public $examReponsitory;
     public $questionReponsitory;
     public $answerReponsitory;
+    public $categoryReponsitory;
 
     public function __construct(ExamReponsitory $examReponsitory,
     QuestionReponsitory $questionReponsitory,
-    AnswerReponsitory $answerReponsitory
+    AnswerReponsitory $answerReponsitory,
+    CategoryReponsitory $categoryReponsitory
     ) {
         $this->examReponsitory = $examReponsitory;
         $this->questionReponsitory = $questionReponsitory;
         $this->answerReponsitory = $answerReponsitory;
+        $this->categoryReponsitory = $categoryReponsitory;
+    }
+
+    public function list($inputs)
+    {
+        return $this->examReponsitory->getAll($inputs);
     }
 
     public function create($inputs)
@@ -217,5 +228,37 @@ class ExamService {
         }
 
         return $this->examReponsitory->delete($id);
+    }
+
+    public function activeExam($id)
+    {
+        try {
+            $exam = $this->examReponsitory->find($id);
+            if(isset($exam)) {
+                $data = [
+                    'is_active' => $exam->is_active==Exam::ACTIVE?Exam::UN_ACTIVE:Exam::ACTIVE,
+                ];
+                return $this->examReponsitory->update('id',$id,$data);
+            }
+        } catch (Throwable $e) {
+            Log::warning($e->getMessage());
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    //web
+
+    public function listExamsByCategory($category_slug)
+    {
+        $category_id = $this->categoryReponsitory->findOne('slug', $category_slug)->id;
+        return $this->examReponsitory->listExamsByCategory($category_id);
+    }
+
+    public function getExamBySlug($slug)
+    {
+        $exam = $this->examReponsitory->getExamBySlug($slug)->toArray();
+        $dto = new ExamDTO($exam);
+        return $dto->formatData();
+        // return $this->examReponsitory->listExamsByCategory($category_id);
     }
 }

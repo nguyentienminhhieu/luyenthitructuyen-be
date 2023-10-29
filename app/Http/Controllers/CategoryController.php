@@ -76,4 +76,17 @@ class CategoryController extends Controller
     {
         return $this->categoryService->delete($id);
     }
+
+    //web
+    public function listCategory(Request $request)
+    {
+        try {
+            $inputs = $request->all();
+            $category = $this->categoryService->listCategory($inputs);
+
+            return response()->json(['data'=> $category], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
