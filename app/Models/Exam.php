@@ -10,6 +10,9 @@ class Exam extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const ACTIVE = 1;
+    const UN_ACTIVE = 0;
+
     protected $table = "exams";
 
     protected $fillable = [

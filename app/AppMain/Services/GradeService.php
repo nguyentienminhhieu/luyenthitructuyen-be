@@ -44,4 +44,10 @@ class GradeService {
     {
         return  $this->gradeReponsitory->delete($id);
     }
+
+    //web
+    public function getListGrade($inputs)
+    {
+        return $this->gradeReponsitory->getListGrade($inputs);
+    }
 }
