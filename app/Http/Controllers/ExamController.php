@@ -106,4 +106,16 @@ class ExamController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+    public function submitExam(Request $request)
+    {
+        try {
+            $slug = $request['slug'];
+            $take_exam = $request['take_exam'];
+            $exam = $this->examService->submitExam($slug, $take_exam);
+
+            return response()->json(['data'=> $exam], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
