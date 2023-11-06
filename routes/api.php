@@ -8,6 +8,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\FileUploadController;
 use App\Models\Exam;
 
 /*
@@ -80,3 +81,5 @@ Route::prefix('admin') ->group(function() {
         Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
     });
 });
+
+Route::post('/upload', [FileUploadController::class, 'upload']);

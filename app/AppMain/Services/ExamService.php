@@ -7,6 +7,7 @@ use App\AppMain\Reponsitory\AnswerReponsitory;
 use App\AppMain\Reponsitory\CategoryReponsitory;
 use App\Models\Exam;
 use App\AppMain\DTO\ExamDTO;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -256,9 +257,15 @@ class ExamService {
 
     public function getExamBySlug($slug)
     {
-        $exam = $this->examReponsitory->getExamBySlug($slug)->toArray();
-        $dto = new ExamDTO($exam);
-        return $dto->formatData();
+        try {
+            $exam = $this->examReponsitory->getExamBySlug($slug);
+            if(isset($exam)) {
+                $dto = new ExamDTO($exam->toArray());
+                return $dto->formatData();
+            }
+        } catch(Exception $e) {
+            return $e->getMessage();
+        }
         // return $this->examReponsitory->listExamsByCategory($category_id);
     }
 }
