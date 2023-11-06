@@ -19,4 +19,14 @@ class Category extends Model
         "subject_id",
         "is_active",
     ];
+
+    public function Subject()
+    {
+        return $this->hasOne(Subject::class,'id' ,'subject_id');
+    }
+
+    public function Grade()
+    {
+        return $this->hasOne(Grade::class,'id' ,'grade_id');
+    }
 }
