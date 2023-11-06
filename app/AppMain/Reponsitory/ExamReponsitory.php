@@ -36,7 +36,13 @@ class ExamReponsitory extends  BaseRepository  {
     public function listExamsByCategory($category_id)
     {
         $query = $this->getQueryBuilder();
-        return $query->where('category_id', $category_id)->where('is_active', Exam::ACTIVE)->get();
+        return $query
+        ->with(['Category' => function ($query2) {
+            $query2->with('Grade');
+            $query2->with('Subject');
+        }])
+        ->where('category_id', $category_id)
+        ->where('is_active', Exam::ACTIVE)->get();
     }
 
     public function getExamBySlug($slug)
