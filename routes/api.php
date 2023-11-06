@@ -8,6 +8,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\TakeExamController;
 use App\Models\Exam;
 
 /*
@@ -36,6 +37,10 @@ Route::prefix('web') ->group(function() {
         Route::get('/info-user', [UserController::class, 'infoUser']);
         //exam
         Route::get('/detail-exam', [ExamController::class, 'getExamBySlug']);
+        Route::post('/submit-exam', [ExamController::class, 'submitExam']);
+        Route::get('/list-history-exams-by-user', [TakeExamController::class, 'listHistoryExamByUser']);
+        Route::get('/review-exam/{id}', [TakeExamController::class, 'reviewExamById']);
+
     });
 
     //grade

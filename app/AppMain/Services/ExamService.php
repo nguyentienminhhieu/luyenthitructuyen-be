@@ -5,10 +5,10 @@ use App\AppMain\Reponsitory\ExamReponsitory;
 use App\AppMain\Reponsitory\QuestionReponsitory;
 use App\AppMain\Reponsitory\AnswerReponsitory;
 use App\AppMain\Reponsitory\CategoryReponsitory;
+use App\AppMain\Reponsitory\TakeExamReponsitory;
 use App\Models\Exam;
 use App\AppMain\DTO\ExamDTO;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Support\Str;
@@ -19,16 +19,19 @@ class ExamService {
     public $questionReponsitory;
     public $answerReponsitory;
     public $categoryReponsitory;
+    public $takeExamReponsitory;
 
     public function __construct(ExamReponsitory $examReponsitory,
     QuestionReponsitory $questionReponsitory,
     AnswerReponsitory $answerReponsitory,
-    CategoryReponsitory $categoryReponsitory
+    CategoryReponsitory $categoryReponsitory,
+    TakeExamReponsitory $takeExamReponsitory
     ) {
         $this->examReponsitory = $examReponsitory;
         $this->questionReponsitory = $questionReponsitory;
         $this->answerReponsitory = $answerReponsitory;
         $this->categoryReponsitory = $categoryReponsitory;
+        $this->takeExamReponsitory = $takeExamReponsitory;
     }
 
     public function list($inputs)
@@ -256,9 +259,28 @@ class ExamService {
 
     public function getExamBySlug($slug)
     {
-        $exam = $this->examReponsitory->getExamBySlug($slug)->toArray();
-        $dto = new ExamDTO($exam);
-        return $dto->formatData();
-        // return $this->examReponsitory->listExamsByCategory($category_id);
+        try {
+            $exam = $this->examReponsitory->getExamBySlug($slug);
+            if(isset($exam)) {
+                $dto = new ExamDTO($exam->toArray());
+                return $dto->formatData();
+            }
+        } catch(Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function submitExam($slug, $exam_submit)
+    {
+        try {
+            $exam = $this->examReponsitory->getExamBySlug($slug);
+            if(isset($exam)) {
+                $dto = new ExamDTO($exam->toArray(), $exam_submit);
+                $data = $dto->formatTakeExam();
+                return $this->takeExamReponsitory->create($data);
+            }
+        } catch(Exception $e) {
+            return $e->getMessage();
+        }
     }
 }
