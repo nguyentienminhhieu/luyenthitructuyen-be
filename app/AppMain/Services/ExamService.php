@@ -9,6 +9,8 @@ use App\AppMain\Reponsitory\TakeExamReponsitory;
 use App\Models\Exam;
 use App\AppMain\DTO\ExamDTO;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Support\Str;

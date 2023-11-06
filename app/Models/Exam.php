@@ -35,4 +35,9 @@ class Exam extends Model
     {
         return $this->hasMany(Question::class,'reference_id' ,'id');
     }
+
+    public function Category()
+    {
+        return $this->hasOne(Category::class,'id' ,'category_id');
+    }
 }
