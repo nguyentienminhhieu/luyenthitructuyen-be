@@ -58,7 +58,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'slug' => 'nullable|unique:categories',
+            'slug' => 'nullable|unique:categories,slug,'.$id,
             'grade_id' => 'required',
             'subject_id' => 'required',
         ]);
