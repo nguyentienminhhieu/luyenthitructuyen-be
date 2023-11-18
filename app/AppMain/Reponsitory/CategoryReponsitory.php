@@ -15,6 +15,11 @@ class CategoryReponsitory extends  BaseRepository  {
         return Category::query();
     }
 
+    public function getAll() {
+        $query = $this->getQueryBuilder();
+        return $query->with(['Subject', 'Grade'])->get();
+    }
+
     public function checkSlug($input) 
     {
         $query = $this->getQueryBuilder();

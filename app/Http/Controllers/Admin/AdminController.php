@@ -28,6 +28,7 @@ class AdminController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             // Đăng nhập thành công
             $admin = Auth::guard('admin')->user();
+            unset($admin->password);
             $token = $admin->createToken('admin-access-token')->plainTextToken;
 
             return response()->json(['data'=> $admin,'token' => $token]);

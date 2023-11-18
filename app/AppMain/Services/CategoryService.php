@@ -25,7 +25,7 @@ class CategoryService {
 
     public function all()
     {
-        return $this->categoryReponsitory->all();
+        return $this->categoryReponsitory->getAll();
     }
     
     public function show($id)
