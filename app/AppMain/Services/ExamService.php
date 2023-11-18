@@ -41,7 +41,7 @@ class ExamService {
         return $this->examReponsitory->getAll($inputs);
     }
 
-    public function create($inputs)
+    public function create($inputs, $user_id = null)
     {
         try {
             $data = [
@@ -50,7 +50,9 @@ class ExamService {
                 'description' => $inputs['description'],
                 'max_score' => $inputs['max_score'],
                 'duration' => $inputs['duration'],
+                'url_img' => $inputs['url_img'],
                 'category_id' => $inputs['category_id'],
+                'user_id' => $user_id
             ];
     
             $exam = $this->examReponsitory->create($data);
@@ -112,23 +114,35 @@ class ExamService {
         }
     }
 
-    public function show($id)
+    public function show($id, $teacher_id)
     {
-        $exam = $this->examReponsitory->getExam($id);
-        $exam['question_ids'] = $exam->questionIds->pluck('id');
-        unset( $exam->questionIds);
-        return $exam;
+        $exam = $this->examReponsitory->getExam($id, $teacher_id);
+        if($exam) {
+            $exam['question_ids'] = $exam->questionIds->pluck('id');
+            unset( $exam->questionIds);
+            return $exam;
+        } else {
+            return false;
+        }
     }
 
-    public function update($id, $inputs)
+    public function update($id, $inputs, $teacher_id = null)
     {
         try {
+            if(isset($teacher_id)) {
+                $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
+                if(!isset($checkExam)) {
+                    return false;
+                }
+            }
+            
             $data = [
                 'title' => $inputs['title'],
                 'slug' => isset($inputs['slug'])?$inputs['slug']:Str::slug($inputs['title']),
                 'description' => $inputs['description'],
                 'max_score' => $inputs['max_score'],
                 'duration' => $inputs['duration'],
+                'url_img' => $inputs['url_img'],
                 'category_id' => $inputs['category_id'],
             ];
     
@@ -225,8 +239,14 @@ class ExamService {
         }
     }
 
-    public function delete($id)
+    public function delete($id, $teacher_id = null)
     {
+        if(isset($teacher_id)) {
+            $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
+            if(!isset($checkExam)) {
+                return false;
+            }
+        }
         $questions = $this->examReponsitory->find($id)->questions->pluck('id')->toArray();
         foreach($questions as $item){
             $this->questionReponsitory->delete($item);
@@ -235,9 +255,15 @@ class ExamService {
         return $this->examReponsitory->delete($id);
     }
 
-    public function activeExam($id)
+    public function activeExam($id, $teacher_id = null)
     {
         try {
+            if(isset($teacher_id)) {
+                $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
+                if(!isset($checkExam)) {
+                    return false;
+                }
+            }
             $exam = $this->examReponsitory->find($id);
             if(isset($exam)) {
                 $data = [
@@ -252,6 +278,11 @@ class ExamService {
     }
 
     //web
+
+    public function listExamsByTeacher($techer_id)
+    {
+        return $this->examReponsitory->listExamsByTeacher($techer_id);
+    }
 
     public function listExamsByCategory($category_slug)
     {
