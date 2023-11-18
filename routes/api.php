@@ -41,9 +41,16 @@ Route::prefix('web') ->group(function() {
         Route::post('/submit-exam', [ExamController::class, 'submitExam']);
         Route::get('/list-history-exams-by-user', [TakeExamController::class, 'listHistoryExamByUser']);
         Route::get('/review-exam/{id}', [TakeExamController::class, 'reviewExamById']);
-
+        //teacher 
+        Route::post('/create-exam', [ExamController::class, 'createExam']);
+        Route::get('/list-exam-create-by-teacher', [ExamController::class, 'listExamsByTeacher']);
+        Route::get('/exam/{id}', [ExamController::class, 'show']);
+        Route::put('/update-exam/{id}', [ExamController::class, 'update']);
+        Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
+        Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
+        Route::get('/list-exam-has-been-done-by-user', [TakeExamController::class, 'listExamsHasBeenDoneByUser']);
     });
-
+    
     //grade
     Route::get('/list-grades', [GradeController::class, 'listGrade']);
     //category

@@ -36,4 +36,17 @@ class TakeExamController extends Controller
         }
     }
 
+    //teacher
+    public function listExamsHasBeenDoneByUser(Request $request)
+    {
+        try {
+            $exam_id = $request['exam_id'];
+            $exam = $this->takeExamService->listExamsHasBeenDoneByUser($exam_id);
+
+            return response()->json(['data'=> $exam], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }
