@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\AppMain\Services\ExamService;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class ExamController extends Controller
 {
@@ -29,8 +31,9 @@ class ExamController extends Controller
     public function createExam(Request $request)
     {
         try {
+            $user_id = Auth::user()->role == User::TEACHER ? Auth::user()->id : null;
             $inputs = $request->all();
-            $exam = $this->examService->create($inputs);
+            $exam = $this->examService->create($inputs, $user_id);
 
             return response()->json(['data'=> $exam], 200);
         } catch(Exception $e){
@@ -41,9 +44,13 @@ class ExamController extends Controller
     public function show($id)
     {
         try {
-            $exam = $this->examService->show($id);
-
-            return response()->json(['data'=> $exam,'status'=>1,'message'=>'get success'], 200);
+            $teacher_id = Auth::user()->role == User::TEACHER ? Auth::user()->id : null;
+            $exam = $this->examService->show($id, $teacher_id);
+            if($exam) {
+                return response()->json(['data'=> $exam,'status'=>1,'message'=>'get success'], 200);
+            } else {
+                return response()->json(['error' => 'get exam failed']);
+            }
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -52,10 +59,15 @@ class ExamController extends Controller
     public function update($id, Request $request)
     {
         try {
+            $teacher_id = Auth::user()->role == User::TEACHER ? Auth::user()->id : null;
             $inputs = $request->all();
-            $exam = $this->examService->update($id, $inputs);
+            $exam = $this->examService->update($id, $inputs, $teacher_id);
 
-            return response()->json(['data'=> $exam], 200);
+            if($exam) {
+                return response()->json(['data'=> $exam,'status'=>1,'message'=>'update success'], 200);
+            } else {
+                return response()->json(['error' => 'update exam failed']);
+            }
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -64,9 +76,14 @@ class ExamController extends Controller
     public function delete($id)
     {
         try {
-            $exam = $this->examService->delete($id);
+            $teacher_id = Auth::user()->role == User::TEACHER ? Auth::user()->id : null;
+            $exam = $this->examService->delete($id, $teacher_id);
 
-            return response()->json(['data'=> $exam], 200);
+            if($exam) {
+                return response()->json(['data'=> $exam,'status'=>1,'message'=>'delete success'], 200);
+            } else {
+                return response()->json(['error' => 'delete exam failed']);
+            }
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -75,9 +92,14 @@ class ExamController extends Controller
     public function activeExam($id)
     {
         try {
-            $exam = $this->examService->activeExam($id);
+            $teacher_id = Auth::user()->role == User::TEACHER ? Auth::user()->id : null;
+            $exam = $this->examService->activeExam($id, $teacher_id);
 
-            return response()->json(['data'=> $exam], 200);
+            if($exam) {
+                return response()->json(['data'=> $exam,'status'=>1,'message'=>'active success'], 200);
+            } else {
+                return response()->json(['error' => 'active exam failed']);
+            }
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -114,6 +136,21 @@ class ExamController extends Controller
             $exam = $this->examService->submitExam($slug, $take_exam);
 
             return response()->json(['data'=> $exam], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function listExamsByTeacher()
+    {
+        try {
+            if(Auth::user()->role == User::TEACHER) {
+                $exams = $this->examService->listExamsByTeacher(Auth::user()->id);
+                return response()->json(['data'=> $exams], 200);
+            } else {
+                 return response()->json(['error' => 'you are not permission']);
+            }
+
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }

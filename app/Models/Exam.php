@@ -24,6 +24,7 @@ class Exam extends Model
         "duration",
         "is_active",
         "category_id",
+        'url_img',
     ];
 
     public function questions()
@@ -39,5 +40,10 @@ class Exam extends Model
     public function Category()
     {
         return $this->hasOne(Category::class,'id' ,'category_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }

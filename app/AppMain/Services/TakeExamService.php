@@ -46,4 +46,9 @@ class TakeExamService {
         $exam['take_exam'] = json_decode($exam['take_exam']);
         return $exam;
     }
+
+    public function listExamsHasBeenDoneByUser($exam_id) 
+    {
+        return $this->takeExamReponsitory->listExamsHasBeenDoneByUser($exam_id);
+    }
 }
