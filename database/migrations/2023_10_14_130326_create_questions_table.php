@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('content');
+            $table->text('content');
             $table->string('slug');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->unsignedInteger('reference_id');
             $table->unsignedInteger('parent_id')->nullable();
             $table->string('file')->nullable();

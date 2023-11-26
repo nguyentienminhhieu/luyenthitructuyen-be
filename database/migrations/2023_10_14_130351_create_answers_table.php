@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->string('content');
-            $table->string('explanation')->nullable();
+            $table->text('content');
+            $table->text('explanation')->nullable();
             $table->unsignedInteger('question_id');
             $table->integer('is_correct')->default(0);
             $table->timestamp('deleted_at')->nullable();

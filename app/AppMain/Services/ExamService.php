@@ -50,7 +50,7 @@ class ExamService {
                 'description' => $inputs['description'],
                 'max_score' => $inputs['max_score'],
                 'duration' => $inputs['duration'],
-                'url_img' => $inputs['url_img'],
+                'url_img' => $inputs['url_img']??'',
                 'category_id' => $inputs['category_id'],
                 'user_id' => $user_id
             ];
@@ -79,6 +79,8 @@ class ExamService {
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
+                    'explanation' => $item['explanation'],
+                    'page' => isset($item['page'])?$item['page']:false,
                     'type' => 0, //type = 0 => EXAM, type = 1 => EXERCISE
                 ];
                 $question = $this->questionReponsitory->create($data);
@@ -176,6 +178,8 @@ class ExamService {
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
+                    'explanation' => $item['explanation'],
+                    'page' => isset($item['page'])?$item['page']:false,
                     'type' => 0, //type = 0 => EXAM, type = 1 => EXERCISE
                 ];
                 if(isset($item['id'])) {
