@@ -20,6 +20,7 @@ class Question extends Model
         "parent_id",
         "file",
         "type",
+        "page"
     ];
 
     public function questionsExtends()
