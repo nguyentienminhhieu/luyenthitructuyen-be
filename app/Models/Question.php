@@ -10,6 +10,9 @@ class Question extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const EXAM = 0;
+    const EXERCISE = 1;
+
     protected $table = "questions";
 
     protected $fillable = [
@@ -20,7 +23,8 @@ class Question extends Model
         "parent_id",
         "file",
         "type",
-        "page"
+        "page",
+        "explanation"
     ];
 
     public function questionsExtends()

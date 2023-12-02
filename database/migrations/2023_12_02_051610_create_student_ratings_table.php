@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->integer('page')->default(0);
-            $table->text('explanation')->nullable();
+        Schema::create('student_ratings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->integer('total_score')->default(0);
+            $table->integer('total_exam')->default(0);
+            $table->timestamps();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->dropColumn('page');
-            $table->dropColumn('explanation');
-        });
+        Schema::dropIfExists('student_ratings');
     }
 };

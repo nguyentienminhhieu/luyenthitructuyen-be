@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->integer('page')->default(0);
-            $table->text('explanation')->nullable();
+        Schema::create('comment_exams', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('exam_id');
+            $table->bigInteger('teacher_id');
+            $table->bigInteger('comment');
+            $table->timestamps();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('questions', function (Blueprint $table) {
-            $table->dropColumn('page');
-            $table->dropColumn('explanation');
-        });
+        Schema::dropIfExists('comment_exams');
     }
 };

@@ -1,19 +1,19 @@
 <?php
 
 namespace App\AppMain\Reponsitory;
-use App\Models\Exam;
+use App\Models\Exercise;
 use App\Models\Question;
 
-class ExamReponsitory extends  BaseRepository  {
+class ExerciseReponsitory extends  BaseRepository  {
     
     public function getModel()
     {
-        return Exam::class;
+        return Exercise::class;
     }
 
     public function getQueryBuilder()
     {
-        return Exam::query();
+        return Exercise::query();
     }
 
     public function getAll($inputs) 
@@ -29,7 +29,7 @@ class ExamReponsitory extends  BaseRepository  {
         return $query->get();
     }
 
-    public function getExam($id, $teacher_id = null) 
+    public function getExercise($id, $teacher_id = null) 
     {
         $query = $this->getQueryBuilder();
         return $query->with([
@@ -37,7 +37,7 @@ class ExamReponsitory extends  BaseRepository  {
                 $query2->with('answers');
                 $query2->with('questionsExtends.answers');
                 $query2->whereNull('parent_id');
-                $query2->where('type', Question::EXAM);
+                $query2->where('type', Question::EXERCISE);
             }
         ])
             ->with('questionIds')
@@ -48,7 +48,7 @@ class ExamReponsitory extends  BaseRepository  {
     }
     
     //web
-    public function listExamsByTeacher($teacher_id)
+    public function listExercisesByTeacher($teacher_id)
     {
         $query = $this->getQueryBuilder();
         return $query
@@ -60,7 +60,7 @@ class ExamReponsitory extends  BaseRepository  {
         ->get();
     }
     
-    public function listExamsByCategory($category_id)
+    public function listExercisesByCategory($category_id)
     {
         $query = $this->getQueryBuilder();
         return $query
@@ -69,10 +69,10 @@ class ExamReponsitory extends  BaseRepository  {
             $query2->with('Subject');
         }])
         ->where('category_id', $category_id)
-        ->where('is_active', Exam::ACTIVE)->get();
+        ->where('is_active', Exercise::ACTIVE)->get();
     }
 
-    public function getExamBySlug($slug)
+    public function getExerciseBySlug($slug)
     {
         $query = $this->getQueryBuilder();
         return $query->with([
@@ -80,7 +80,7 @@ class ExamReponsitory extends  BaseRepository  {
                 $query2->with('answers');
                 $query2->with('questionsExtends.answers');
                 $query2->whereNull('parent_id');
-                $query2->where('type', Question::EXAM);
+                $query2->where('type', Question::EXERCISE);
             }
         ])->with('Category', function ($query2) {
             $query2->with(['Grade', 'Subject']);
@@ -88,10 +88,10 @@ class ExamReponsitory extends  BaseRepository  {
         ->where('slug', $slug)->first();
     }
 
-    public function checkExamCreateByTeacher($exam_id, $teacher_id)
+    public function checkExerciseCreateByTeacher($exercise_id, $teacher_id)
     {
         $query = $this->getQueryBuilder();
-        return $query->where('id', $exam_id)
+        return $query->where('id', $exercise_id)
         ->where('user_id', $teacher_id)->first();   
     }
 }
