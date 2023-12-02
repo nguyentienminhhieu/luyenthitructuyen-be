@@ -1,14 +1,13 @@
 <?php
 
 namespace App\AppMain\Services;
-use App\AppMain\Reponsitory\ExamReponsitory;
+use App\AppMain\Reponsitory\ExerciseReponsitory;
 use App\AppMain\Reponsitory\QuestionReponsitory;
 use App\AppMain\Reponsitory\AnswerReponsitory;
 use App\AppMain\Reponsitory\CategoryReponsitory;
-use App\AppMain\Reponsitory\TakeExamReponsitory;
-use App\Models\Exam;
+use App\Models\Exercise;
+use App\AppMain\DTO\ExerciseDTO;
 use App\Models\Question;
-use App\AppMain\DTO\ExamDTO;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,29 +16,27 @@ use Throwable;
 use Illuminate\Support\Str;
 
 
-class ExamService {
-    public $examReponsitory;
+class ExerciseService {
+    public $exerciseReponsitory;
     public $questionReponsitory;
     public $answerReponsitory;
     public $categoryReponsitory;
-    public $takeExamReponsitory;
+    public $takeExerciseReponsitory;
 
-    public function __construct(ExamReponsitory $examReponsitory,
+    public function __construct(ExerciseReponsitory $exerciseReponsitory,
     QuestionReponsitory $questionReponsitory,
     AnswerReponsitory $answerReponsitory,
     CategoryReponsitory $categoryReponsitory,
-    TakeExamReponsitory $takeExamReponsitory
     ) {
-        $this->examReponsitory = $examReponsitory;
+        $this->exerciseReponsitory = $exerciseReponsitory;
         $this->questionReponsitory = $questionReponsitory;
         $this->answerReponsitory = $answerReponsitory;
         $this->categoryReponsitory = $categoryReponsitory;
-        $this->takeExamReponsitory = $takeExamReponsitory;
     }
 
     public function list($inputs)
     {
-        return $this->examReponsitory->getAll($inputs);
+        return $this->exerciseReponsitory->getAll($inputs);
     }
 
     public function create($inputs, $user_id = null)
@@ -56,20 +53,20 @@ class ExamService {
                 'user_id' => $user_id
             ];
     
-            $exam = $this->examReponsitory->create($data);
+            $exercise = $this->exerciseReponsitory->create($data);
             
             if(isset($inputs['questions']))
             {
-                $this->createQuestions($inputs['questions'], $exam->id);
+                $this->createQuestions($inputs['questions'], $exercise->id);
             }
-            return response()->json(['success' => $exam]);
+            return response()->json(['success' => $exercise]);
         } catch (Throwable $e) {
             Log::warning($e->getMessage());
             return response()->json(['error' => $e->getMessage()]);
         }
     }
 
-    public function createQuestions($questions = [], $exam_id, $parent_id = null)
+    public function createQuestions($questions = [], $exercise_id, $parent_id = null)
     {
         try {
             foreach($questions as $item) {
@@ -77,12 +74,12 @@ class ExamService {
                     'content' => $item['content'],
                     'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
                     'description' => $item['description'],
-                    'reference_id' => $exam_id,
+                    'reference_id' => $exercise_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'page' => isset($item['page'])?$item['page']:false,
-                    'type' => Question::EXAM, //type = 0 => EXAM, type = 1 => EXERCISE
+                    'type' => Question::EXERCISE, //type = 0 => Exercise, type = 1 => EXERCISE
                 ];
                 $question = $this->questionReponsitory->create($data);
                 if(isset($item['answers']) && count($item['answers']) > 0)
@@ -90,7 +87,7 @@ class ExamService {
                     $this->createAnswers($item['answers'], $question->id);
                 }
                 if(isset($item['questions_extends']) && count($item['questions_extends']) > 0) {
-                    $this->createQuestions($item['questions_extends'], $exam_id, $question->id);
+                    $this->createQuestions($item['questions_extends'], $exercise_id, $question->id);
                 }
             }
         } catch (Throwable $e) {
@@ -119,11 +116,11 @@ class ExamService {
 
     public function show($id, $teacher_id)
     {
-        $exam = $this->examReponsitory->getExam($id, $teacher_id);
-        if($exam) {
-            $exam['question_ids'] = $exam->questionIds->pluck('id');
-            unset( $exam->questionIds);
-            return $exam;
+        $exercise = $this->exerciseReponsitory->getExercise($id, $teacher_id);
+        if($exercise) {
+            $exercise['question_ids'] = $exercise->questionIds->pluck('id');
+            unset( $exercise->questionIds);
+            return $exercise;
         } else {
             return false;
         }
@@ -133,8 +130,8 @@ class ExamService {
     {
         try {
             if(isset($teacher_id)) {
-                $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
-                if(!isset($checkExam)) {
+                $checkExercise = $this->exerciseReponsitory->checkExerciseCreateByTeacher($id, $teacher_id);
+                if(!isset($checkExercise)) {
                     return false;
                 }
             }
@@ -145,30 +142,30 @@ class ExamService {
                 'description' => $inputs['description'],
                 'max_score' => $inputs['max_score'],
                 'duration' => $inputs['duration'],
-                'url_img' => $inputs['url_img'],
+                'url_img' => $inputs['url_img']??'',
                 'category_id' => $inputs['category_id'],
             ];
     
-            $exam = $this->examReponsitory->update('id', $id, $data);
+            $exercise = $this->exerciseReponsitory->update('id', $id, $data);
             
             if(isset($inputs['questions']))
             {
                 $checkQuestionIds = [];
                 $this->updateQuestions($inputs['questions'], $id, $checkQuestionIds);
-
                 $getIdQuestionNotExist = array_merge(array_diff($inputs['question_ids'], $checkQuestionIds), array_diff($checkQuestionIds,$inputs['question_ids']));
+                
                 foreach($getIdQuestionNotExist as $question_id) {
                     $this->questionReponsitory->delete($question_id);
                 } 
             }
-            return response()->json(['success' => $exam??[]]);
+            return response()->json(['success' => $exercise??[]]);
         } catch (Throwable $e) {
             Log::warning($e->getMessage());
             return response()->json(['error' => $e->getMessage()]);
         }
     }
 
-    public function updateQuestions($questions = [], $exam_id, &$checkQuestionIds = [], $parent_id = null)
+    public function updateQuestions($questions = [], $exercise_id, &$checkQuestionIds = [], $parent_id = null)
     {
         try {
             foreach($questions as $item) {
@@ -176,15 +173,14 @@ class ExamService {
                     'content' => $item['content'],
                     'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
                     'description' => $item['description'],
-                    'reference_id' => $exam_id,
+                    'reference_id' => $exercise_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'page' => isset($item['page'])?$item['page']:false,
-                    'type' => Question::EXAM, //type = 0 => EXAM, type = 1 => EXERCISE
+                    'type' => Question::EXERCISE, //type = 0 => Exercise, type = 1 => EXERCISE
                 ];
                 if(isset($item['id'])) {
-                    
                     $question = $this->questionReponsitory->update('id', $item['id'] ,$data);
                     array_push($checkQuestionIds, $item['id']);
                     if(isset($item['answers']) && count($item['answers']) > 0)
@@ -192,7 +188,7 @@ class ExamService {
                         $this->updateAnswers($item['answers'], $item['id']);
                     }
                     if(isset($item['questions_extends']) && count($item['questions_extends']) > 0) {
-                        $this->updateQuestions($item['questions_extends'], $exam_id, $checkQuestionIds, $item['id']);
+                        $this->updateQuestions($item['questions_extends'], $exercise_id, $checkQuestionIds, $item['id']);
                     }
                 } else {
                     $question = $this->questionReponsitory->create($data);
@@ -202,7 +198,7 @@ class ExamService {
                         $this->createAnswers($item['answers'], $question->id);
                     }
                     if(isset($item['questions_extends']) && count($item['questions_extends']) > 0) {
-                        $this->createQuestions($item['questions_extends'], $exam_id, $question->id);
+                        $this->createQuestions($item['questions_extends'], $exercise_id, $question->id);
                     }
                 }
                 
@@ -247,34 +243,34 @@ class ExamService {
     public function delete($id, $teacher_id = null)
     {
         if(isset($teacher_id)) {
-            $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
-            if(!isset($checkExam)) {
+            $checkExercise = $this->exerciseReponsitory->checkExerciseCreateByTeacher($id, $teacher_id);
+            if(!isset($checkExercise)) {
                 return false;
             }
         }
-        $questions = $this->examReponsitory->find($id)->questions->pluck('id')->toArray();
+        $questions = $this->exerciseReponsitory->find($id)->questions->pluck('id')->toArray();
         foreach($questions as $item){
             $this->questionReponsitory->delete($item);
         }
 
-        return $this->examReponsitory->delete($id);
+        return $this->exerciseReponsitory->delete($id);
     }
 
-    public function activeExam($id, $teacher_id = null)
+    public function activeExercise($id, $teacher_id = null)
     {
         try {
             if(isset($teacher_id)) {
-                $checkExam = $this->examReponsitory->checkExamCreateByTeacher($id, $teacher_id);
-                if(!isset($checkExam)) {
+                $checkExercise = $this->exerciseReponsitory->checkExerciseCreateByTeacher($id, $teacher_id);
+                if(!isset($checkExercise)) {
                     return false;
                 }
             }
-            $exam = $this->examReponsitory->find($id);
-            if(isset($exam)) {
+            $exercise = $this->exerciseReponsitory->find($id);
+            if(isset($exercise)) {
                 $data = [
-                    'is_active' => $exam->is_active==Exam::ACTIVE?Exam::UN_ACTIVE:Exam::ACTIVE,
+                    'is_active' => $exercise->is_active==Exercise::ACTIVE?Exercise::UN_ACTIVE:Exercise::ACTIVE,
                 ];
-                return $this->examReponsitory->update('id',$id,$data);
+                return $this->exerciseReponsitory->update('id',$id,$data);
             }
         } catch (Throwable $e) {
             Log::warning($e->getMessage());
@@ -284,23 +280,23 @@ class ExamService {
 
     //web
 
-    public function listExamsByTeacher($techer_id)
+    public function listExercisesByTeacher($techer_id)
     {
-        return $this->examReponsitory->listExamsByTeacher($techer_id);
+        return $this->exerciseReponsitory->listExercisesByTeacher($techer_id);
     }
 
-    public function listExamsByCategory($category_slug)
+    public function listExercisesByCategory($category_slug)
     {
         $category_id = $this->categoryReponsitory->findOne('slug', $category_slug)->id;
-        return $this->examReponsitory->listExamsByCategory($category_id);
+        return $this->exerciseReponsitory->listExercisesByCategory($category_id);
     }
 
-    public function getExamBySlug($slug)
+    public function getExerciseBySlug($slug)
     {
         try {
-            $exam = $this->examReponsitory->getExamBySlug($slug);
-            if(isset($exam)) {
-                $dto = new ExamDTO($exam->toArray());
+            $exercise = $this->exerciseReponsitory->getExerciseBySlug($slug);
+            if(isset($exercise)) {
+                $dto = new ExerciseDTO($exercise->toArray());
                 return $dto->formatData();
             }
         } catch(Exception $e) {
@@ -308,14 +304,14 @@ class ExamService {
         }
     }
 
-    public function submitExam($slug, $exam_submit)
+    public function submitExercise($slug, $exercise_submit)
     {
         try {
-            $exam = $this->examReponsitory->getExamBySlug($slug);
-            if(isset($exam)) {
-                $dto = new ExamDTO($exam->toArray(), $exam_submit);
+            $exercise = $this->exerciseReponsitory->getExerciseBySlug($slug);
+            if(isset($exercise)) {
+                $dto = new ExerciseDTO($exercise->toArray(), $exercise_submit);
                 $data = $dto->formatTakeExam();
-                return $this->takeExamReponsitory->create($data);
+                return $data;
             }
         } catch(Exception $e) {
             return $e->getMessage();

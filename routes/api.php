@@ -8,9 +8,11 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\TakeExamController;
 use App\Http\Controllers\FileUploadController;
 use App\Models\Exam;
+use App\Models\Exercise;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,23 +34,38 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('web') ->group(function() {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
+    Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
 
     Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         //user
         Route::get('/info-user', [UserController::class, 'infoUser']);
+        Route::put('/update-user', [UserController::class, 'updateUser']);
+        Route::post('/change-password', [UserController::class, 'changePassword']);
         //exam
         Route::get('/detail-exam', [ExamController::class, 'getExamBySlug']);
         Route::post('/submit-exam', [ExamController::class, 'submitExam']);
         Route::get('/list-history-exams-by-user', [TakeExamController::class, 'listHistoryExamByUser']);
         Route::get('/review-exam/{id}', [TakeExamController::class, 'reviewExamById']);
+        
+        //exercise
+        Route::get('/detail-exercise', [ExerciseController::class, 'getExerciseBySlug']);
+        Route::post('/submit-exercise', [ExerciseController::class, 'submitExercise']);
         //teacher 
-        Route::post('/create-exam', [ExamController::class, 'createExam']);
-        Route::get('/list-exam-create-by-teacher', [ExamController::class, 'listExamsByTeacher']);
-        Route::get('/exam/{id}', [ExamController::class, 'show']);
-        Route::put('/update-exam/{id}', [ExamController::class, 'update']);
-        Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
-        Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
-        Route::get('/list-exam-has-been-done-by-user', [TakeExamController::class, 'listExamsHasBeenDoneByUser']);
+            //exam
+            Route::post('/create-exam', [ExamController::class, 'createExam']);
+            Route::get('/list-exam-create-by-teacher', [ExamController::class, 'listExamsByTeacher']);
+            Route::get('/exam/{id}', [ExamController::class, 'show']);
+            Route::put('/update-exam/{id}', [ExamController::class, 'update']);
+            Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
+            Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
+            Route::get('/list-exam-has-been-done-by-user', [TakeExamController::class, 'listExamsHasBeenDoneByUser']);
+            //exercise
+            Route::post('/create-exercise', [ExerciseController::class, 'createExercise']);
+            Route::get('/list-exercise-create-by-teacher', [ExerciseController::class, 'listExercisesByTeacher']);
+            Route::get('/exercise/{id}', [ExerciseController::class, 'show']);
+            Route::put('/update-exercise/{id}', [ExerciseController::class, 'update']);
+            Route::delete('/delete-exercise/{id}', [ExerciseController::class, 'delete']);
+            Route::post('/active-exercise/{id}', [ExerciseController::class, 'activeExercise']);
     });
     
     //grade
@@ -57,6 +74,9 @@ Route::prefix('web') ->group(function() {
     Route::get('/list-categories', [CategoryController::class, 'listCategory']);
     //exam
     Route::get('/list-exams', [ExamController::class, 'listExamsByCategory']);
+
+    //exercise
+    Route::get('/list-exercises', [ExerciseController::class, 'listExercisesByCategory']);
     
 });
 
@@ -91,6 +111,14 @@ Route::prefix('admin') ->group(function() {
         Route::put('/update-exam/{id}', [ExamController::class, 'update']);
         Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
         Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
+
+        //exercise
+        Route::get('/list-exercise', [ExerciseController::class, 'listExercise']);
+        Route::post('/create-exercise', [ExerciseController::class, 'createExercise']);
+        Route::get('/exercise/{id}', [ExerciseController::class, 'show']);
+        Route::put('/update-exercise/{id}', [ExerciseController::class, 'update']);
+        Route::delete('/delete-exercise/{id}', [ExerciseController::class, 'delete']);
+        Route::post('/active-exercise/{id}', [ExerciseController::class, 'activeExercise']);
     });
 });
 
