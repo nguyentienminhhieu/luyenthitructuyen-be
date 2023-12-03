@@ -75,7 +75,7 @@ class ExamService {
             foreach($questions as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
+                    'slug' => 'slug',
                     'description' => $item['description'],
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
@@ -174,7 +174,7 @@ class ExamService {
             foreach($questions as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
+                    'slug' => 'slug',
                     'description' => $item['description'],
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
