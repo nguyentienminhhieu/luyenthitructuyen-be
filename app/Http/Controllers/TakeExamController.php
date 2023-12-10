@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\AppMain\Services\TakeExamService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class TakeExamController extends Controller
 {
@@ -44,6 +45,43 @@ class TakeExamController extends Controller
             $exam = $this->takeExamService->listExamsHasBeenDoneByUser($exam_id);
 
             return response()->json(['data'=> $exam], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function commentExam(Request $request) 
+    {
+        try {
+            $input = $request->only(['take_exam_id','comment']);
+            $teacher_id = Auth::id();
+            $exams = $this->takeExamService->commentExam($teacher_id, $input);
+            return response()->json(['data'=> $exams], 200); 
+
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateCommentExam($id, Request $request) 
+    {
+        try {
+            $input = $request->only(['take_exam_id','comment']);
+            $teacher_id = Auth::id();
+            $exams = $this->takeExamService->updateCommentExam($teacher_id, $id, $input);
+            return response()->json(['data'=> $exams], 200); 
+
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteCommentExam($id) 
+    {
+        try {
+            $exams = $this->takeExamService->deleteCommentExam($id);
+            return response()->json(['data'=> $exams], 200); 
+
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }

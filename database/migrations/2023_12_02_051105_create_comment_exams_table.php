@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('exam_id');
             $table->bigInteger('teacher_id');
-            $table->bigInteger('comment');
+            $table->text('comment');
             $table->timestamps();
         });
     }

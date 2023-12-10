@@ -26,4 +26,13 @@ class TakeExamReponsitory extends  BaseRepository  {
         $query = $this->getQueryBuilder();
         return $query->with('exam')->where('exam_id', $exam_id)->select('user_id','exam_id','total_score','total_question_success', 'duration','id')->get();
     }
-}
+
+    public function reviewExam($take_exam_id) 
+    {
+        $query = $this->getQueryBuilder();
+        return $query->with('comments', function ($q) {
+            $q->with('teacher');
+        })
+        ->where('id', $take_exam_id)->first();
+    }
+}   

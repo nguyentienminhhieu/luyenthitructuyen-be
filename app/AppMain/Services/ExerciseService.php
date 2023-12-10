@@ -72,7 +72,7 @@ class ExerciseService {
             foreach($questions as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
+                    'slug' => 'slug',
                     'description' => $item['description'],
                     'reference_id' => $exercise_id,
                     'parent_id' => $parent_id,
@@ -102,7 +102,7 @@ class ExerciseService {
             foreach($answers as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'question_id' => $question_id,
                     'is_correct' => $item['is_correct'],
                 ];
@@ -171,7 +171,7 @@ class ExerciseService {
             foreach($questions as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'slug' => isset($item['slug'])?$item['slug']:Str::slug($item['content']),
+                    'slug' => 'slug',
                     'description' => $item['description'],
                     'reference_id' => $exercise_id,
                     'parent_id' => $parent_id,
@@ -219,7 +219,7 @@ class ExerciseService {
             foreach($answers as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'question_id' => $question_id,
                     'is_correct' => $item['is_correct'],
                 ];

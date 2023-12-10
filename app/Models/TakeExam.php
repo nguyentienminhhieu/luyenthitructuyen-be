@@ -18,8 +18,18 @@ class TakeExam extends Model
         'duration'
     ];
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
     public function exam()
     {
         return $this->hasOne(Exam::class, 'id', 'exam_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(CommentExam::class, 'exam_id', 'id');
     }
 }
