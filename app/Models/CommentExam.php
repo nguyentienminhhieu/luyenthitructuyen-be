@@ -16,4 +16,9 @@ class CommentExam extends Model
         'teacher_id',
         'comment'
     ];
+
+    public function teacher()
+    {
+        return $this->hasOne(User::class, 'id', 'teacher_id');
+    }
 }

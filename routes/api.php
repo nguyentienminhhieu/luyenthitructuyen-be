@@ -11,6 +11,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\TakeExamController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\HomeController;
 use App\Models\Exam;
 use App\Models\Exercise;
 
@@ -59,6 +60,9 @@ Route::prefix('web') ->group(function() {
             Route::delete('/delete-exam/{id}', [ExamController::class, 'delete']);
             Route::post('/active-exam/{id}', [ExamController::class, 'activeExam']);
             Route::get('/list-exam-has-been-done-by-user', [TakeExamController::class, 'listExamsHasBeenDoneByUser']);
+            Route::post('/comment-exam', [TakeExamController::class, 'commentExam']);
+            Route::put('/update-comment-exam/{id}', [TakeExamController::class, 'updateCommentExam']);
+            Route::delete('/delete-comment-exam/{id}', [TakeExamController::class, 'deleteCommentExam']);
             //exercise
             Route::post('/create-exercise', [ExerciseController::class, 'createExercise']);
             Route::get('/list-exercise-create-by-teacher', [ExerciseController::class, 'listExercisesByTeacher']);
@@ -67,7 +71,8 @@ Route::prefix('web') ->group(function() {
             Route::delete('/delete-exercise/{id}', [ExerciseController::class, 'delete']);
             Route::post('/active-exercise/{id}', [ExerciseController::class, 'activeExercise']);
     });
-    
+    //home
+    Route::get('/get-rank-student', [HomeController::class, 'getRank']);
     //grade
     Route::get('/list-grades', [GradeController::class, 'listGrade']);
     //category

@@ -80,7 +80,7 @@ class ExamService {
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'page' => isset($item['page'])?$item['page']:false,
                     'type' => Question::EXAM, //type = 0 => EXAM, type = 1 => EXERCISE
                 ];
@@ -105,7 +105,7 @@ class ExamService {
             foreach($answers as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'question_id' => $question_id,
                     'is_correct' => $item['is_correct'],
                 ];
@@ -179,7 +179,7 @@ class ExamService {
                     'reference_id' => $exam_id,
                     'parent_id' => $parent_id,
                     'file' => $item['file'],
-                    'explanation' => $item['explanation'],
+                    'explanation' => $item['explanation']??'',
                     'page' => isset($item['page'])?$item['page']:false,
                     'type' => Question::EXAM, //type = 0 => EXAM, type = 1 => EXERCISE
                 ];
@@ -223,7 +223,6 @@ class ExamService {
             foreach($answers as $item) {
                 $data = [
                     'content' => $item['content'],
-                    'explanation' => $item['explanation'],
                     'question_id' => $question_id,
                     'is_correct' => $item['is_correct'],
                 ];
