@@ -117,7 +117,35 @@ class UserController extends Controller
             $input = $request->all();
             $user = $this->userService->forgotPassword($input);
 
-            // return response()->json(['data'=> $user], 200);
+            return response()->json(['data'=> $user], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        try {  
+            $request->validate([
+                'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+            ]);
+            $token = $request['token'];
+            $password = $request['password'];
+            $user = $this->userService->resetPassword($token, $password);
+
+            return response()->json(['data'=> $user], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        try {  
+            $token = $request['token'];
+            $user = $this->userService->verifyEmail($token);
+
+            return response()->json(['data'=> $user], 200);
         } catch(Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }

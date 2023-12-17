@@ -6,7 +6,7 @@
 
 <p>
     Please click on the following link to reset your password:
-    <a href="{{ $token }}">Reset Password</a>
+    <a href="http://localhost:4000/reset-password/{{ $token }}">Reset Password</a>
 </p>
 {{ $token }}
 <p>If you did not request a password reset, no further action is required.</p>
