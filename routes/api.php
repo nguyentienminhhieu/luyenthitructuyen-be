@@ -36,6 +36,8 @@ Route::prefix('web') ->group(function() {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
+    Route::post('/reset-password', [UserController::class, 'resetPassword']);
+    Route::post('/verify-email', [UserController::class, 'verifyEmail']);
 
     Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         //user
