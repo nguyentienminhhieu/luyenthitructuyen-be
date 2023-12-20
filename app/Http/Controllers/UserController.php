@@ -53,10 +53,11 @@ class UserController extends Controller
         }
     }
 
-    public function listUsers()
+    public function listUsers(Request $request)
     {
         try {  
-            $user = $this->userService->listUsers();
+            $inputs = $request->all();
+            $user = $this->userService->listUsers($inputs);
 
             return response()->json(['data'=> $user], 200);
         } catch(Exception $e){

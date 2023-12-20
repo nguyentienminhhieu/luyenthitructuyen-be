@@ -280,15 +280,19 @@ class ExerciseService {
 
     //web
 
-    public function listExercisesByTeacher($techer_id)
+    public function listExercisesByTeacher($techer_id, $inputs)
     {
-        return $this->exerciseReponsitory->listExercisesByTeacher($techer_id);
+        return $this->exerciseReponsitory->listExercisesByTeacher($techer_id, $inputs);
     }
 
-    public function listExercisesByCategory($category_slug)
+    public function listExercises($inputs)
     {
-        $category_id = $this->categoryReponsitory->findOne('slug', $category_slug)->id;
-        return $this->exerciseReponsitory->listExercisesByCategory($category_id);
+        $category_id = null;
+        if(isset($inputs['category_slug'])) {
+            $category = $this->categoryReponsitory->findOne('slug', $inputs['category_slug']);
+            $category_id = $category->id??null;
+        }
+        return $this->exerciseReponsitory->listExercises($category_id, $inputs);
     }
 
     public function getExerciseBySlug($slug)
@@ -316,5 +320,10 @@ class ExerciseService {
         } catch(Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    public function getExerciseHome () 
+    {
+        return $this->exerciseReponsitory->getExerciseHome();
     }
 }

@@ -38,9 +38,9 @@ class UserService {
         ];
         return $this->userReponsitory->update('id', $user_id, $input);
     }
-    public function listUsers()
+    public function listUsers($inputs)
     {
-        $user = $this->userReponsitory->all();
+        $user = $this->userReponsitory->getUsers($inputs);
         
         return $user;
     }

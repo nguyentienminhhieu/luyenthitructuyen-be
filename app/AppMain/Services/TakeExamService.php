@@ -39,10 +39,10 @@ class TakeExamService {
         $this->commentExamReponsitory = $commentExamReponsitory;
     }
 
-    public function listHistoryExamByUser()
+    public function listHistoryExamByUser($inputs)
     {
         $user_id = Auth::id();
-        return $this->takeExamReponsitory->listHistoryExamByUser($user_id);
+        return $this->takeExamReponsitory->listHistoryExamByUser($user_id, $inputs);
     }
     public function reviewExamById($id)
     {
@@ -51,9 +51,9 @@ class TakeExamService {
         return $exam;
     }
 
-    public function listExamsHasBeenDoneByUser($exam_id) 
+    public function listExamsHasBeenDoneByUser($inputs) 
     {
-        return $this->takeExamReponsitory->listExamsHasBeenDoneByUser($exam_id);
+        return $this->takeExamReponsitory->listExamsHasBeenDoneByUser($inputs);
     }
 
     public function commentExam($teacher_id, $input) 

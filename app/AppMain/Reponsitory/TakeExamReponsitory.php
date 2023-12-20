@@ -15,18 +15,45 @@ class TakeExamReponsitory extends  BaseRepository  {
         return TakeExam::query();
     }
 
-    public function listHistoryExamByUser($user_id)
+    public function listHistoryExamByUser($user_id, $inputs)
     {
         $query = $this->getQueryBuilder();
-        return $query->with('exam')->where('user_id',$user_id)->select('user_id','exam_id','total_score','total_question_success', 'duration','id')->get();
+        return $query->with('exam')
+        ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
+            $q->whereHas('exam', function ($q2) use ($inputs) {
+                $q2->where('title', 'LIKE', '%'.$inputs['title'].'%');
+            });
+        })
+        ->where('user_id',$user_id)
+        ->with('user')
+        ->orderBy('created_at','DESC')
+        ->select('user_id','exam_id','total_score','total_question_success', 'duration','id', 'total_question','times')->paginate($inputs['limit']??10);
     }
 
-    public function listExamsHasBeenDoneByUser($exam_id) 
+    public function listExamsHasBeenDoneByUser($inputs) 
     {
         $query = $this->getQueryBuilder();
-        return $query->with('exam')->where('exam_id', $exam_id)->select('user_id','exam_id','total_score','total_question_success', 'duration','id')->get();
+        return $query->with('exam')
+        ->where('exam_id', $inputs['exam_id'])
+        ->with('user')
+        ->when(isset($inputs['username']) && $inputs['username'] != '' , function ($q) use ($inputs) {
+            $q->whereHas('user', function ($q2) use ($inputs) {
+                $q2->where('name', 'LIKE', '%'.$inputs['username'].'%');
+            });
+        })
+        ->when(isset($inputs['username']) && $inputs['username'] != '' , function ($q) use ($inputs) {
+            $q->whereHas('user', function ($q2) use ($inputs) {
+                $q2->where('name', 'LIKE', '%'.$inputs['username'].'%');
+            });
+        })
+        ->when(isset($inputs['score']) && $inputs['score'] != null , function ($q) use ($inputs) {
+            $q->where('total_score', '>=', $inputs['score']);
+        })
+        ->select('user_id','exam_id','total_score','total_question_success', 'duration','id','total_question','times')
+        ->orderBy('created_at','DESC')
+        ->paginate($inputs['limit']??'');
     }
-
+    
     public function reviewExam($take_exam_id) 
     {
         $query = $this->getQueryBuilder();
@@ -34,5 +61,14 @@ class TakeExamReponsitory extends  BaseRepository  {
             $q->with('teacher');
         })
         ->where('id', $take_exam_id)->first();
+    }
+
+    public function getLastTakeExam ($exam_id, $user_id) 
+    {
+        $query = $this->getQueryBuilder();
+        return $query->where('exam_id', $exam_id)
+        ->where('user_id', $user_id)->latest()
+        ->select('user_id','exam_id','total_score','total_question_success', 'duration','id','total_question','times')
+        ->first();
     }
 }   
