@@ -75,15 +75,17 @@ Route::prefix('web') ->group(function() {
     });
     //home
     Route::get('/get-rank-student', [HomeController::class, 'getRank']);
+    Route::get('/list-exam-home', [HomeController::class, 'getExamHome']);
+    Route::get('/list-exercise-home', [HomeController::class, 'getExerciseHome']);
     //grade
     Route::get('/list-grades', [GradeController::class, 'listGrade']);
     //category
     Route::get('/list-categories', [CategoryController::class, 'listCategory']);
     //exam
-    Route::get('/list-exams', [ExamController::class, 'listExamsByCategory']);
+    Route::get('/list-exams', [ExamController::class, 'listExams']);
 
     //exercise
-    Route::get('/list-exercises', [ExerciseController::class, 'listExercisesByCategory']);
+    Route::get('/list-exercises', [ExerciseController::class, 'listExercises']);
     
 });
 

@@ -26,7 +26,25 @@ class ExerciseReponsitory extends  BaseRepository  {
             $query->whereNull('user_id');
         }
         $query->with('user');
-        return $query->get();
+        if(isset($inputs['category_id']) && $inputs['category_id'] != null) {
+            $query->where('category_id', $inputs['category_id']);
+        }
+        if(isset($inputs['grade_id']) && $inputs['grade_id'] != null) {
+            $query->whereHas('Category', function ($q2) use ($inputs) {
+                $q2->where('grade_id', $inputs['grade_id']);
+            });
+            $query->with('Category');
+        }
+        if(isset($inputs['subject_id']) && $inputs['subject_id'] != null) {
+            $query->whereHas('Category', function ($q2) use ($inputs) {
+                $q2->where('subject_id', $inputs['subject_id']);
+            });
+            $query->with('Category');
+        }
+        if(isset($inputs['title']) && $inputs['title'] != '') {
+            $query->where('title','LIKE' , '%'.$inputs['title'].'%');
+        }
+        return $query->paginate($inputs['limit']??10);
     }
 
     public function getExercise($id, $teacher_id = null) 
@@ -48,7 +66,7 @@ class ExerciseReponsitory extends  BaseRepository  {
     }
     
     //web
-    public function listExercisesByTeacher($teacher_id)
+    public function listExercisesByTeacher($teacher_id, $inputs)
     {
         $query = $this->getQueryBuilder();
         return $query
@@ -57,10 +75,13 @@ class ExerciseReponsitory extends  BaseRepository  {
             $query2->with('Subject');
         }])
         ->where('user_id', $teacher_id)
-        ->get();
+        ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
+            $q->where('title', 'LIKE', '%'.$inputs['title'].'%');
+        })
+        ->paginate($inputs['limit']??10);
     }
     
-    public function listExercisesByCategory($category_id)
+    public function listExercises($category_id = null, $inputs)
     {
         $query = $this->getQueryBuilder();
         return $query
@@ -68,8 +89,13 @@ class ExerciseReponsitory extends  BaseRepository  {
             $query2->with('Grade');
             $query2->with('Subject');
         }])
-        ->where('category_id', $category_id)
-        ->where('is_active', Exercise::ACTIVE)->get();
+        ->when(isset($category_id), function ($q) use ($category_id) {
+            $q->where('category_id', $category_id);
+        })
+        ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
+            $q->where('title','LIKE' , '%'.$inputs['title'].'%');
+        })
+        ->where('is_active', Exercise::ACTIVE)->paginate($inputs['limit']??10);
     }
 
     public function getExerciseBySlug($slug)
@@ -93,5 +119,12 @@ class ExerciseReponsitory extends  BaseRepository  {
         $query = $this->getQueryBuilder();
         return $query->where('id', $exercise_id)
         ->where('user_id', $teacher_id)->first();   
+    }
+
+    public function getExerciseHome()
+    {
+        $query = $this->getQueryBuilder();
+        return $query->where('is_active', Exercise::ACTIVE)
+        ->limit(10)->orderBy('created_at', 'DESC')->get();   
     }
 }

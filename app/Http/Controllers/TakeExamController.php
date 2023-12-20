@@ -15,10 +15,11 @@ class TakeExamController extends Controller
         $this->takeExamService = $takeExamService;
     }
 
-    public function listHistoryExamByUser()
+    public function listHistoryExamByUser(Request $request)
     {
         try {
-            $exam = $this->takeExamService->listHistoryExamByUser();
+            $inputs = $request->all();
+            $exam = $this->takeExamService->listHistoryExamByUser($inputs);
 
             return response()->json(['data'=> $exam], 200);
         } catch(Exception $e){
@@ -41,8 +42,8 @@ class TakeExamController extends Controller
     public function listExamsHasBeenDoneByUser(Request $request)
     {
         try {
-            $exam_id = $request['exam_id'];
-            $exam = $this->takeExamService->listExamsHasBeenDoneByUser($exam_id);
+            $inputs = $request->all();
+            $exam = $this->takeExamService->listExamsHasBeenDoneByUser($inputs);
 
             return response()->json(['data'=> $exam], 200);
         } catch(Exception $e){

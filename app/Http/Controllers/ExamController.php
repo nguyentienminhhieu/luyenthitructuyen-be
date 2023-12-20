@@ -106,11 +106,11 @@ class ExamController extends Controller
     }
 
     //web
-    public function listExamsByCategory(Request $request)
+    public function listExams(Request $request)
     {
         try {
-            $category_slug = $request['category_slug'];
-            $exam = $this->examService->listExamsByCategory($category_slug);
+            $inputs = $request->all();
+            $exam = $this->examService->listExams($inputs);
 
             return response()->json(['data'=> $exam], 200);
         } catch(Exception $e){
@@ -141,11 +141,12 @@ class ExamController extends Controller
         }
     }
 
-    public function listExamsByTeacher()
+    public function listExamsByTeacher(Request $request)
     {
         try {
+            $inputs = $request->all();
             if(Auth::user()->role == User::TEACHER) {
-                $exams = $this->examService->listExamsByTeacher(Auth::user()->id);
+                $exams = $this->examService->listExamsByTeacher(Auth::user()->id, $inputs);
                 return response()->json(['data'=> $exams], 200);
             } else {
                  return response()->json(['error' => 'you are not permission']);

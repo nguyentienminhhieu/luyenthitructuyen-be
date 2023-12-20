@@ -283,15 +283,19 @@ class ExamService {
 
     //web
 
-    public function listExamsByTeacher($techer_id)
+    public function listExamsByTeacher($techer_id, $inputs)
     {
-        return $this->examReponsitory->listExamsByTeacher($techer_id);
+        return $this->examReponsitory->listExamsByTeacher($techer_id, $inputs);
     }
 
-    public function listExamsByCategory($category_slug)
-    {
-        $category_id = $this->categoryReponsitory->findOne('slug', $category_slug)->id;
-        return $this->examReponsitory->listExamsByCategory($category_id);
+    public function listExams($inputs)
+    {   
+        $category_id = null;
+        if(isset($inputs['category_slug']) && $inputs['category_slug'] != '') {
+            $category = $this->categoryReponsitory->findOne('slug', $inputs['category_slug']);
+            $category_id = $category->id??null;
+        }
+        return $this->examReponsitory->listExams($category_id, $inputs);
     }
 
     public function getExamBySlug($slug)
@@ -310,14 +314,24 @@ class ExamService {
     public function submitExam($slug, $exam_submit)
     {
         try {
+            $user_id = Auth::id();
             $exam = $this->examReponsitory->getExamBySlug($slug);
+            $last_take_exams = $this->takeExamReponsitory->getLastTakeExam($exam->id, $user_id);
             if(isset($exam)) {
                 $dto = new ExamDTO($exam->toArray(), $exam_submit);
                 $data = $dto->formatTakeExam();
+                if(isset($last_take_exams)) {
+                    $data['times'] = (int)$last_take_exams->times+1;
+                }
                 return $this->takeExamReponsitory->create($data);
             }
         } catch(Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    public function getExamHome ()
+    {
+        return $this->examReponsitory->getExamHome();
     }
 }

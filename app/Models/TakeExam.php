@@ -15,7 +15,9 @@ class TakeExam extends Model
         'take_exam',
         'total_score',
         'total_question_success',
-        'duration'
+        'duration',
+        'total_question',
+        'times'
     ];
 
     public function user()

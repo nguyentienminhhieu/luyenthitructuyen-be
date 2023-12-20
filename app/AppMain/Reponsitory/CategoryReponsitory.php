@@ -27,7 +27,7 @@ class CategoryReponsitory extends  BaseRepository  {
     }
 
     //web
-    public function listCategory($grade_id, $subject_id)
+    public function listCategory($grade_id, $subject_id, $inputs)
     {
         $query = $this->getQueryBuilder();
         return $query
@@ -37,6 +37,9 @@ class CategoryReponsitory extends  BaseRepository  {
         ->when(isset($subject_id), function ($query2) use ($subject_id){
             $query2->where('subject_id', $subject_id);
         })
-        ->get();
+        ->when(isset($inputs['title']) && $inputs['title'] != '', function ($query2) use ($inputs){
+            $query2->where('title','LIKE' , '%'.$inputs['title'].'%');
+        })
+        ->paginate($inputs['limit']??10);
     }
 }

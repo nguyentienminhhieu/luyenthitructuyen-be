@@ -106,11 +106,11 @@ class ExerciseController extends Controller
     }
 
     //web
-    public function listExercisesByCategory(Request $request)
+    public function listExercises(Request $request)
     {
         try {
-            $category_slug = $request['category_slug'];
-            $exercise = $this->exerciseService->listExercisesByCategory($category_slug);
+            $inputs = $request->all();
+            $exercise = $this->exerciseService->listExercises($inputs);
 
             return response()->json(['data'=> $exercise], 200);
         } catch(Exception $e){
@@ -141,11 +141,12 @@ class ExerciseController extends Controller
         }
     }
 
-    public function listExercisesByTeacher()
+    public function listExercisesByTeacher(Request $request)
     {
         try {
+            $inputs =  $request->all();
             if(Auth::user()->role == User::TEACHER) {
-                $exercises = $this->exerciseService->listExercisesByTeacher(Auth::user()->id);
+                $exercises = $this->exerciseService->listExercisesByTeacher(Auth::user()->id, $inputs);
                 return response()->json(['data'=> $exercises], 200);
             } else {
                  return response()->json(['error' => 'you are not permission']);

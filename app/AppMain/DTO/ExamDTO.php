@@ -61,7 +61,8 @@ class ExamDTO
             'take_exam' => json_encode($this->exam),
             'total_score' => (int)$total_score,
             'total_question_success' => $total_question_success,
-            'duration' => $this->exam['duration']
+            'duration' => $this->exam['duration'],
+            'total_question' => $index
         ];
         return $data;
     }

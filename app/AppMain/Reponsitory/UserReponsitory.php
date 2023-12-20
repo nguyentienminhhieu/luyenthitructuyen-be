@@ -20,4 +20,17 @@ class UserReponsitory extends  BaseRepository{
         $query = $this->getQueryBuilder();
         return $query->create($input);
     }
+
+    public function getUsers($inputs)
+    {
+        $query = $this->getQueryBuilder();
+        if(isset($inputs['username']) && $inputs['username'] != '') {
+            $query->where('name','LIKE', '%'.$inputs['username'].'%');
+        }
+        if(isset($inputs['grade_id']) && $inputs['grade_id'] != null) {
+            $query->where('grade_id','=', $inputs['grade_id']);
+        }
+        $query->with('grade');
+        return $query->paginate($inputs['limit']??10);
+    }
 }

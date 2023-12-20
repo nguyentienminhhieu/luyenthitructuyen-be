@@ -76,6 +76,6 @@ class CategoryService {
         if(isset($inputs['subject_slug'])){
             $subject_id = $this->subjectReponsitory->findOne('slug', $inputs['subject_slug'])->id;
         }   
-        return $this->categoryReponsitory->listCategory($grade_id, $subject_id);
+        return $this->categoryReponsitory->listCategory($grade_id, $subject_id, $inputs);
     }
 }
