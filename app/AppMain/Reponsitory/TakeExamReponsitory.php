@@ -18,7 +18,25 @@ class TakeExamReponsitory extends  BaseRepository  {
     public function listHistoryExamByUser($user_id, $inputs)
     {
         $query = $this->getQueryBuilder();
-        return $query->with('exam')
+        $query->whereHas('exam', function ($q) use ($inputs) {
+            $q->when(isset($inputs['category_id']) && $inputs['category_id'] != null, function ($q2) use ($inputs) {
+                $q2->where('category_id', $inputs['category_id']);
+            });
+            $q->whereHas('Category', function ($q2) use ($inputs) {
+                $q2->when(isset($inputs['subject_id']) && $inputs['subject_id'] != null, function ($q3) use ($inputs) {
+                    $q3->where('subject_id', $inputs['subject_id']);
+                });
+            });
+            $q->whereHas('Category', function ($q2) use ($inputs) {
+                $q2->when(isset($inputs['grade_id']) && $inputs['grade_id'] != null, function ($q3) use ($inputs) {
+                    $q3->where('grade_id', $inputs['grade_id']);
+                });
+            });
+        });
+        $query->with('exam', function ($q)
+        {
+            $q->with('Category');
+        })
         ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
             $q->whereHas('exam', function ($q2) use ($inputs) {
                 $q2->where('title', 'LIKE', '%'.$inputs['title'].'%');
@@ -27,7 +45,9 @@ class TakeExamReponsitory extends  BaseRepository  {
         ->where('user_id',$user_id)
         ->with('user')
         ->orderBy('created_at','DESC')
-        ->select('user_id','exam_id','total_score','total_question_success', 'duration','id', 'total_question','times')->paginate($inputs['limit']??10);
+        ->select('user_id','exam_id','total_score','total_question_success', 'duration','id', 'total_question','times');
+
+        return $query->paginate($inputs['limit']??10);
     }
 
     public function listExamsHasBeenDoneByUser($inputs) 

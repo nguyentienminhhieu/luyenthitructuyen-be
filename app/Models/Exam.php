@@ -46,4 +46,9 @@ class Exam extends Model
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public function takeExam()
+    {
+        return $this->hasMany(TakeExam::class, 'exam_id', 'id');
+    }
 }
