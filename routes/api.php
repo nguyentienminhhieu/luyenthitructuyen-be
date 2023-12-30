@@ -65,6 +65,7 @@ Route::prefix('web') ->group(function() {
             Route::post('/comment-exam', [TakeExamController::class, 'commentExam']);
             Route::put('/update-comment-exam/{id}', [TakeExamController::class, 'updateCommentExam']);
             Route::delete('/delete-comment-exam/{id}', [TakeExamController::class, 'deleteCommentExam']);
+            Route::get('/list-exams-has-user', [ExamController::class, 'listExamsHasUser']);
             //exercise
             Route::post('/create-exercise', [ExerciseController::class, 'createExercise']);
             Route::get('/list-exercise-create-by-teacher', [ExerciseController::class, 'listExercisesByTeacher']);

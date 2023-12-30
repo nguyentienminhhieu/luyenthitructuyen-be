@@ -33,18 +33,17 @@ class ExamReponsitory extends  BaseRepository  {
             $query->whereHas('Category', function ($q2) use ($inputs) {
                 $q2->where('grade_id', $inputs['grade_id']);
             });
-            $query->with('Category');
         }
         if(isset($inputs['subject_id']) && $inputs['subject_id'] != null) {
             $query->whereHas('Category', function ($q2) use ($inputs) {
                 $q2->where('subject_id', $inputs['subject_id']);
             });
-            $query->with('Category');
         }
         if(isset($inputs['title']) && $inputs['title'] != '') {
             $query->where('title','LIKE' , '%'.$inputs['title'].'%');
         }
-        return $query->paginate($inputs['limit']??10);
+        $query->with('Category');
+        return $query->orderBy('created_at','DESC')->paginate($inputs['limit']??10);
     }
 
     public function getExam($id, $teacher_id = null) 
@@ -95,7 +94,29 @@ class ExamReponsitory extends  BaseRepository  {
         ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q2) use ($inputs) {
             $q2->where('title','LIKE', '%'.$inputs['title'].'%');
         })
-        ->where('is_active', Exam::ACTIVE)->paginate($inputs['limit']??10);
+        ->where('is_active', Exam::ACTIVE)->orderBy('created_at','DESC')->paginate($inputs['limit']??10);
+    }
+
+    public function listExamsHasUser($category_id = null, $inputs, $user_id)
+    {
+        $query = $this->getQueryBuilder();
+        return $query
+        ->with(['Category' => function ($query2) {
+            $query2->with('Grade');
+            $query2->with('Subject');
+        }])
+        ->when(isset($category_id), function ($q2) use ($category_id) {
+            $q2->where('category_id', $category_id);
+        })
+        ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q2) use ($inputs) {
+            $q2->where('title','LIKE', '%'.$inputs['title'].'%');
+        })
+        ->withCount(['takeExam as times_do_exam' => function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        }])
+        ->where('is_active', Exam::ACTIVE)
+        ->orderBy('created_at','DESC')
+        ->paginate($inputs['limit']??10);
     }
 
     public function getExamBySlug($slug)

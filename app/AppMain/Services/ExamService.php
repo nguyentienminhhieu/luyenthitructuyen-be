@@ -298,6 +298,17 @@ class ExamService {
         return $this->examReponsitory->listExams($category_id, $inputs);
     }
 
+    public function listExamsHasUser($inputs)
+    {   
+        $category_id = null;
+        if(isset($inputs['category_slug']) && $inputs['category_slug'] != '') {
+            $category = $this->categoryReponsitory->findOne('slug', $inputs['category_slug']);
+            $category_id = $category->id??null;
+        }
+        $user = Auth::user();
+        return $this->examReponsitory->listExamsHasUser($category_id, $inputs, $user->id);
+    }
+
     public function getExamBySlug($slug)
     {
         try {

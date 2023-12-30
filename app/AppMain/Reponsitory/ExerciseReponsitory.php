@@ -33,18 +33,17 @@ class ExerciseReponsitory extends  BaseRepository  {
             $query->whereHas('Category', function ($q2) use ($inputs) {
                 $q2->where('grade_id', $inputs['grade_id']);
             });
-            $query->with('Category');
         }
         if(isset($inputs['subject_id']) && $inputs['subject_id'] != null) {
             $query->whereHas('Category', function ($q2) use ($inputs) {
                 $q2->where('subject_id', $inputs['subject_id']);
             });
-            $query->with('Category');
         }
         if(isset($inputs['title']) && $inputs['title'] != '') {
             $query->where('title','LIKE' , '%'.$inputs['title'].'%');
         }
-        return $query->paginate($inputs['limit']??10);
+        $query->with('Category');
+        return $query->orderBy('created_at','DESC')->paginate($inputs['limit']??10);
     }
 
     public function getExercise($id, $teacher_id = null) 
@@ -78,6 +77,7 @@ class ExerciseReponsitory extends  BaseRepository  {
         ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
             $q->where('title', 'LIKE', '%'.$inputs['title'].'%');
         })
+        ->orderBy('created_at','DESC')
         ->paginate($inputs['limit']??10);
     }
     
@@ -95,6 +95,7 @@ class ExerciseReponsitory extends  BaseRepository  {
         ->when(isset($inputs['title']) && $inputs['title'] != '', function ($q) use ($inputs) {
             $q->where('title','LIKE' , '%'.$inputs['title'].'%');
         })
+        ->orderBy('created_at','DESC')
         ->where('is_active', Exercise::ACTIVE)->paginate($inputs['limit']??10);
     }
 

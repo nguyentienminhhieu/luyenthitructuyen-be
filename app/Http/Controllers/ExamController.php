@@ -117,6 +117,17 @@ class ExamController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+    public function listExamsHasUser(Request $request)
+    {
+        try {
+            $inputs = $request->all();
+            $exam = $this->examService->listExamsHasUser($inputs);
+
+            return response()->json(['data'=> $exam], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
     public function getExamBySlug(Request $request)
     {
         try {
