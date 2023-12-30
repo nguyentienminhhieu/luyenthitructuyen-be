@@ -107,4 +107,14 @@ class SubjectController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function listSubject() {
+        try {
+            $list = $this->subjectService->all();
+
+            return response()->json(['data'=> $list], 200);
+        } catch(Exception $e){
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
