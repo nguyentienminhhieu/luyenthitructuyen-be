@@ -80,6 +80,8 @@ Route::prefix('web') ->group(function() {
     Route::get('/list-exercise-home', [HomeController::class, 'getExerciseHome']);
     //grade
     Route::get('/list-grades', [GradeController::class, 'listGrade']);
+    //subject
+    Route::get('/list-subjects', [SubjectController::class, 'listSubject']);
     //category
     Route::get('/list-categories', [CategoryController::class, 'listCategory']);
     //exam
